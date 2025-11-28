@@ -97,3 +97,4 @@ tmp/
 
 # CUDA cache
 .nv/
+__init__.py
