@@ -4,7 +4,7 @@
   "data_proc_dir": "Data_processed",
   "num_classes": 3,
   "class_names": ["Baik", "Sedang", "Rusak"],
-  "optimizer": "Adam",
+  "optimizer": "AdamW",
   "activation": "ReLU",
   "batch_size": 8,
   "learning_rate": 0.001,

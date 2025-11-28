@@ -1,18 +1,11 @@
 # Dataset dan Data
 Data/
 Data_processed/
-*.jpg
-*.jpeg
-*.png
-*.gif
-*.bmp
-*.tiff
 
 # Model weights dan checkpoints
 *.pth
 *.pt
 *.ckpt
-checkpoints/
 models/weights/
 *.h5
 *.hdf5
@@ -69,7 +62,6 @@ conda-meta/
 # Results dan Logs
 *.log
 logs/
-*.txt
 
 # OS
 .DS_Store
@@ -94,4 +86,8 @@ tmp/
 
 # CUDA cache
 .nv/
-__init__.py
+
+# Keep outputs folder structure but ignore large model weights only
+outputs/**/*.pth
+outputs/**/*.pt
+outputs/**/*.ckpt
