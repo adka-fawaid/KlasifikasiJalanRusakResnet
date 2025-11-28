@@ -12,7 +12,6 @@ Data_processed/
 *.pth
 *.pt
 *.ckpt
-outputs/
 checkpoints/
 models/weights/
 *.h5
@@ -70,8 +69,6 @@ conda-meta/
 # Results dan Logs
 *.log
 logs/
-results/
-*.csv
 *.txt
 
 # OS
