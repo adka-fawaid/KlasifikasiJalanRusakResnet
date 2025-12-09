@@ -31,23 +31,36 @@ def train_single(cfg):
     out_dir = Path(cfg.get("output_dir", "outputs/run_single"))
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # Determine data directory and augmentation settings
+    use_augmented = cfg.get("use_augmented_data", False)
+    if use_augmented:
+        data_dir = cfg.get("data_augmented_dir", "Data_augmented")
+        print(f"📂 Using pre-augmented data from: {data_dir}")
+    else:
+        data_dir = cfg.get("data_proc_dir", "Data_processed")
+        print(f"📂 Using original data with runtime augmentation from: {data_dir}")
+
     # dataloaders
     train_loader, val_loader, test_loader, train_ds, val_ds, test_ds = make_dataloaders(
-        cfg.get("data_proc_dir", "data_processed"),
+        data_dir,
         input_size=input_size,
         batch_size=batch_size,
         num_workers=num_workers,
-        pin_memory=pin_memory
+        pin_memory=pin_memory,
+        use_augmented_data=use_augmented
     )
 
-    # save sample augmented images once per run folder
-    try:
-        save_augmented_samples_once(Path(cfg.get("data_proc_dir", "data_processed")) / "train",
-                                   input_size,
-                                   out_dir / "aug_samples",
-                                   per_class=cfg.get("save_aug_samples_per_class", 10))
-    except Exception as e:
-        print("Warning: could not save aug samples:", e)
+    # Skip saving sample images if configured
+    if cfg.get("save_sample_outputs", True):
+        try:
+            save_augmented_samples_once(Path(data_dir) / "train",
+                                       input_size,
+                                       out_dir / "aug_samples",
+                                       per_class=cfg.get("save_aug_samples_per_class", 10))
+        except Exception as e:
+            print("Warning: could not save aug samples:", e)
+    else:
+        print("⏩ Skipping sample output generation (save_sample_outputs=False)")
 
     model = build_resnet50(num_classes=cfg.get("num_classes", 3),
                            dense_layers=dense_layers,

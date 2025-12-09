@@ -1,6 +1,7 @@
 # Dataset dan Data
 Data/
 Data_processed/
+Data_augmented/
 
 # Model weights dan checkpoints
 *.pth

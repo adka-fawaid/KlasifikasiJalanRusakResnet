@@ -2,11 +2,10 @@
   "_comment_parameters": "=== HYPERPARAMETER SEARCH OPTIONS ===",
   "_info": "Untuk hyperparameter tuning: masukkan multiple values dalam array",
   "_info2": "Untuk fixed parameter: masukkan hanya 1 value dalam array",
+  "_info3": "Coordinate descent akan mencari satu parameter pada satu waktu",
   
   "optimizer": [
-    "SGD",
-    "Adam", 
-    "AdamW"
+    "Adam"
   ],
   
   "activation": [
@@ -14,7 +13,7 @@
   ],
   
   "batch_size": [
-    8
+    12
   ],
   
   "learning_rate": [
@@ -22,19 +21,28 @@
   ],
   
   "dense_layers": [
-    1
+    2
   ],
   
   "input_size": [
-    128
+    64
   ],
   
   "epochs": [
-    10
+    10,
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100
   ],
   
   "_comment_system": "=== SYSTEM CONFIGURATION ===",
-  "use_kfold": false,
+  "use_kfold": true,
   "k_folds": 5,
   "freeze_backbone": true,
   "device": "cuda",
@@ -48,10 +56,12 @@
   "class_names": ["Jalan Kategori Baik", "Jalan Kurang Baik", "Jalan Rusak"],
   "data_raw_dir": "Data",
   "data_proc_dir": "Data_processed",
+  "data_augmented_dir": "Data_augmented",
+  "use_augmented_data": true,
+  "augmentation_multiplier": 5,
   
   "_comment_output": "=== OUTPUT CONFIGURATION ===",
   "output_dir": "outputs",
-  "save_aug_samples_per_class": 10,
-  "save_pred_samples_per_class": 10,
-  "checkpoint_every": 1
+  "checkpoint_every": 1,
+  "save_sample_outputs": false
 }

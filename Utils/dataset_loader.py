@@ -10,8 +10,17 @@ import random
 MEAN = [0.485, 0.456, 0.406]
 STD  = [0.229, 0.224, 0.225]
 
-def get_transforms(input_size, is_train=True):
-    if is_train:
+def get_transforms(input_size, is_train=True, use_augmented_data=False):
+    """
+    Get transforms for data loading
+    
+    Args:
+        input_size: Target image size
+        is_train: Whether this is for training data
+        use_augmented_data: If True, train data is already augmented so use minimal transforms
+    """
+    if is_train and not use_augmented_data:
+        # Traditional augmentation during training
         return transforms.Compose([
             transforms.RandomRotation(15),
             transforms.RandomResizedCrop(input_size, scale=(0.9, 1.0)),
@@ -20,22 +29,45 @@ def get_transforms(input_size, is_train=True):
             transforms.ToTensor(),
             transforms.Normalize(MEAN, STD)
         ])
+    elif is_train and use_augmented_data:
+        # Minimal transforms for pre-augmented data
+        return transforms.Compose([
+            transforms.Resize((input_size, input_size)),
+            transforms.ToTensor(),
+            transforms.Normalize(MEAN, STD)
+        ])
     else:
+        # Validation/test transforms
         return transforms.Compose([
             transforms.Resize((input_size, input_size)),
             transforms.ToTensor(),
             transforms.Normalize(MEAN, STD)
         ])
 
-def make_dataloaders(data_dir, input_size=128, batch_size=8, num_workers=4, pin_memory=True):
+def make_dataloaders(data_dir, input_size=128, batch_size=8, num_workers=4, pin_memory=True, use_augmented_data=False):
+    """
+    Create data loaders for training
+    
+    Args:
+        data_dir: Path to data directory (either Data_processed or Data_augmented)
+        input_size: Target image size
+        batch_size: Batch size for data loaders
+        num_workers: Number of worker processes
+        pin_memory: Whether to pin memory
+        use_augmented_data: Whether using pre-augmented data
+    """
     data_dir = Path(data_dir)
     train_dir = data_dir / "train"
     val_dir = data_dir / "val"
     test_dir = data_dir / "test"
 
-    train_ds = ImageFolder(str(train_dir), transform=get_transforms(input_size, is_train=True))
-    val_ds = ImageFolder(str(val_dir), transform=get_transforms(input_size, is_train=False))
-    test_ds = ImageFolder(str(test_dir), transform=get_transforms(input_size, is_train=False))
+    # Use appropriate transforms based on whether data is pre-augmented
+    train_transform = get_transforms(input_size, is_train=True, use_augmented_data=use_augmented_data)
+    val_test_transform = get_transforms(input_size, is_train=False, use_augmented_data=False)
+
+    train_ds = ImageFolder(str(train_dir), transform=train_transform)
+    val_ds = ImageFolder(str(val_dir), transform=val_test_transform)
+    test_ds = ImageFolder(str(test_dir), transform=val_test_transform)
 
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=pin_memory)
     val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=pin_memory)
